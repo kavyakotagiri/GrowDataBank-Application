@@ -1,5 +1,7 @@
 # GrowDataApplication
 GrowDataApplication - Hackathon
+Team Name - Tech Titans
+Team Members - Kavya Kotagiri
 
 Files details :
 
