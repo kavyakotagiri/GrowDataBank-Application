@@ -17,17 +17,17 @@ class ExcelToCSV:
 	# folder to save CSV files
 	output_folder = '' 
 	
-	#clean up Savings Accoun Transaction Data sheet data
-	df=pd.read_excel('GrowDataBank.xlsx',sheet_name='Savings Accoun Transaction Data')
+	#clean up Savings Account Transaction Data sheet data
+	df=pd.read_excel('GrowDataBank.xlsx',sheet_name='SavingsAccountTransaction Data')
 	df = df[' Customer_ID     Amount   Transaction_Type  Transaction_Date '].str.strip()
 	savings = df.str.split('\s+', expand=True)
 	savings.columns = ['Customer_ID','Amount','Transaction_Type','Transaction_Date']
 	savings.dropna(inplace=True)
-	savings.to_csv('Savings Accoun Transaction Data.csv', index=False)
+	savings.to_csv('SavingsAccountTransaction Data.csv', index=False)
 	
 	# Loop through each sheet, read it, and export as a CSV file
 	for sheet_name in sheet_names:
-		if sheet_name != 'Savings Accoun Transaction Data':
+		if sheet_name != 'SavingsAccountTransaction Data':
 			df = pd.read_excel(excel_data, sheet_name)
 			csv_file_path = f'{output_folder}{sheet_name}.csv'
 			df.to_csv(csv_file_path, index=False)
@@ -207,40 +207,55 @@ class LoanTransaction:
         
         missed_emi = emi_df['EMIMissed'].max()
         return emi_df[emi_df['EMIMissed'] == missed_emi].reset_index()
-        #return emi_df
 
-
+# Calculates Credit Card Remaining Limit details for Credit Card Account
 class CreditCardTransaction:
     def __init__(self,c_id):
         self.c_id=c_id
 
+    #Calculation based on Account_Id
     def get_credit_rem_cid(self):
+        #Credit Limit and Used amounts for given customer account
         Credit_Limit = cc_transactions[cc_transactions['Account_Id']==self.c_id].groupby('Account_Id')['Card Limit'].sum().reset_index()
         Used_Amount = cc_transactions[cc_transactions['Account_Id']==self.c_id].groupby('Account_Id')['Current Outstanding Bill'].sum().reset_index()
-        #print(Used_Amount)
-        #loan_transactions[loan_transactions['Account_id'] == self.c_id]
+        
         if Credit_Limit.empty or Used_Amount.empty:
             return 0
-        merged_df2 = Credit_Limit.merge(Used_Amount, on='Account_Id', how='outer')
-        merged_df2['Remaining Credit'] = merged_df2['Card Limit']-merged_df2['Current Outstanding Bill']
-        merged_df2['Remaining Credit'] = merged_df2.loc[merged_df2['Account_Id'] == self.c_id,'Remaining Credit']
-        return merged_df2
+        else:
+            #Merge Loan and Recovered amount DFs based on Account_Id
+            merged_df2 = Credit_Limit.merge(Used_Amount, on='Account_Id', how='outer')
+   
+            #Calculate Credit Card Remaining Limit based on Credit Limit and Used amounts for given Account Id
+            merged_df2['Remaining Credit'] = merged_df2['Card Limit']-merged_df2['Current Outstanding Bill']
+            merged_df2['Remaining Credit'] = merged_df2.loc[merged_df2['Account_Id'] == self.c_id,'Remaining Credit']
+            #Return Credit Card Remaining Limit for given Account Id
+            return merged_df2
     
+    #Calculation based on given month for all customers
     def get_credit_rem_month(self):
+        #Credit Limit and Used amounts for all customer for a specific month
         Credit_Limit = cc_transactions[cc_transactions['Credit Card Date_Month']==self.c_id].groupby('Account_Id')['Card Limit'].sum().reset_index()
         Used_Amount = cc_transactions[cc_transactions['Credit Card Date_Month']==self.c_id].groupby('Account_Id')['Current Outstanding Bill'].sum().reset_index()
         if Credit_Limit.empty or Used_Amount.empty:
             return 0
-        merged_df2 = Credit_Limit.merge(Used_Amount, on='Account_Id', how='outer')
-        merged_df2['Remaining Credit'] = merged_df2['Card Limit']-merged_df2['Current Outstanding Bill']
-        return merged_df2
+        else:
+            #Merge Credit Limit and Used amounts DFs based on Account_Id
+            merged_df2 = Credit_Limit.merge(Used_Amount, on='Account_Id', how='outer')
+            #Calculate Loan Balance based on Loan and Recovered Amounts
+            merged_df2['Remaining Credit'] = merged_df2['Card Limit']-merged_df2['Current Outstanding Bill']
+            #Return Credit Card Remaining Limit for all customer in given month
+            return merged_df2
     
+    #Call method based of datatype passed in the argument
     def get_credit_rem(self):
+        #argument is string when Account_Id is passed. Call respective method.
         if isinstance(self.c_id, str):
             return CreditCardTransaction.get_credit_rem_cid(self)
+        #argument is int when month is passed. Call respective method.
         elif isinstance(self.c_id, int):
             return CreditCardTransaction.get_credit_rem_month(self)
 
+# Gives Non-Performing Asset(NPA) customer List based on missed payments
 class NPAIdentification:
     def __init__(self):
         pass
@@ -248,19 +263,23 @@ class NPAIdentification:
         NPA_Customers = cc_transactions[cc_transactions['Number of Missed Payments']>0].reset_index()
         return NPA_Customers
 
+#Gives customers list for Credit Card Offering - Eligible for increased credit card balances
 class CreditCardOffering:
     def __init__(self):
         pass
     def get_ccoffer_accounts(self):
+        #Get the customers list based on Card Limit, No. Of missed payments and No. Of Transactions
         CC_Offer_Customers = cc_transactions[(cc_transactions['Card Limit']<=10000) & (cc_transactions['Number of Missed Payments']==0) & (cc_transactions['Number of Transactions']>=10)].reset_index()
         return CC_Offer_Customers
-    
+
+#Gives Monthly Savings account and credit card spends of each customer
 class MonthlySpends:
     def __init__(self,c_id):
         self.c_id=c_id
     def get_monthly_data(self):
         savings = SavingsTransaction(self.c_id).get_current_balance_month()
         credit = CreditCardTransaction(self.c_id).get_credit_rem_month()
+        #Merge Savings and Credit card data
         merged_df3 = savings.merge(credit, left_on='Customer_ID',right_on='Account_Id', how='outer')
         merged_df3['CreditAmount'].fillna(0, inplace=True)
         merged_df3['DebitAmount'].fillna(0, inplace=True)
@@ -272,22 +291,16 @@ class MonthlySpends:
         required_columns = merged_df3[['Customer_ID', 'CreditAmount','DebitAmount','Card Limit','Current Outstanding Bill','Remaining Credit']]
         return required_columns
 
+#Gives Financial Summary such as Savings, Loan and Credit Card details for specific customer id/ all customer for given month
 class FinancialSummary:
 
     def __init__(self, c_id):
         self.c_id=c_id
 
     def calculate_all_dept_data(self):
-
         FinancialSummary.current_balance = SavingsTransaction(self.c_id).get_current_balance()
         FinancialSummary.loan_amount_rem = LoanTransaction(self.c_id).get_loan_rem()
         FinancialSummary.credit_card_balance = CreditCardTransaction(self.c_id).get_credit_rem()
-
-        # #Customer/Account Level details
-        # if isinstance(self.c_id, str):
-        #     pass
-        # #Monthly Level Details
-        # elif isinstance(self.c_id, int):
 
     def print_cus_report(self):
         #Customer/Account Level details
@@ -301,31 +314,26 @@ class FinancialSummary:
         print("\nRemaining Loan Amount:\n", self.loan_amount_rem)
         print("\nRemaining Credit Limit:\n", self.credit_card_balance)
 
-    def print_monthly_report(self):
-        pass
-
     def print_charts(self):
-
-        # Savings Account Transaction Details
+        #Bar Chart for Savings Account currenct balance
         self.current_balance.plot(kind='bar', x='Customer_ID', y=["CreditAmount", "DebitAmount","Current Balance"], figsize=(8, 6), title='Savings Account Transaction Details', color=['skyblue','orange','green'])
         plt.xlabel('Customer ID')
         plt.ylabel('Transaction Amount')
         plt.grid(True)
         plt.show()
 
-        #Credit Card Transaction Details
+        #Bar Chart for Credit Card Remaining Balance 
         self.credit_card_balance.plot(kind='bar', x='Account_Id', y=["Card Limit", "Current Outstanding Bill"], figsize=(8, 6), title='Credit Card Transaction Details', color=['green','red'])
         plt.xlabel('Account_Id')
         plt.ylabel('Credit Limits')
         plt.grid(True)
         plt.show()
 
-
 #Read excel data properly in CSV format
 ExcelToCSV()
 
 #Create separate Pandas DataFrames for each CSV file data
-savings_transactions = pd.read_csv('Savings Accoun Transaction Data.csv')
+savings_transactions = pd.read_csv('SavingsAccountTransaction Data.csv')
 loan_transactions = pd.read_csv('Loan Account Data.csv')
 cc_transactions = pd.read_csv('Credit Card Data.csv')
 
@@ -345,12 +353,12 @@ savings_transactions['Customer_ID'] = savings_transactions['Customer_ID'].astype
 loan_transactions['Account_id'] = loan_transactions['Account_id'].astype('string')
 cc_transactions['Account_Id'] = cc_transactions['Account_Id'].astype('string')
 
-
 # Financial Summary details for a specific customer
 Customer_Id = 'cust_idno_1004'
 fs=FinancialSummary(Customer_Id)
 fs.calculate_all_dept_data()
 fs.print_cus_report()
+#Bar Chart for Savings Account currenct balance and CC Remaining Limit for given customer
 fs.print_charts()
 
 # Financial Summary details for all customer in given month
@@ -358,14 +366,15 @@ Month_Num = 2
 fs=FinancialSummary(Month_Num)
 fs.calculate_all_dept_data()
 fs.print_cus_report()
-
+#Bar Chart for Savings Account currenct balance and CC Remaining Limit for month data
 fs.print_charts()
 
-#Missed EMI payments
+
+#High Missed EMIs Accounts
 print("\nHigh Missed EMI Account:\n")
 missed_emi_df = LoanTransaction().get_max_missed_emi()
 print(missed_emi_df)
-#High Missed EMIs Accounts
+#Bar chart for High Missed EMIs Accounts
 missed_emi_df.plot(kind='bar', x='Account_id', y=["NoOfMonths", "EMIMissed"], figsize=(8, 6), title='High Missed EMIs Accounts', color=['green','red'])
 plt.xlabel('Account id')
 plt.ylabel('EMI')
@@ -378,12 +387,13 @@ msg = f"\nMonthly spends of each Customer for month: {Month_Num}\n"
 print(msg)
 monthly_spends = MonthlySpends(Month_Num).get_monthly_data()
 print(monthly_spends)
-#Monthly spends of each customer
+#Bar chart for Monthly spends of each customer
 monthly_spends.plot(kind='bar', x='Customer_ID', y=["CreditAmount", "DebitAmount","Card Limit","Current Outstanding Bill","Remaining Credit"], figsize=(8, 6), title=msg, color=['blue','yellow','green','red','purple'])
 plt.xlabel('Customer ID')
 plt.ylabel('Monthly spends')
 plt.grid(True)
 plt.show()
+
 
 ############ Linked List to get last 10 trasactions ############
 sorted_df = savings_transactions.sort_values(by='Transaction_Date', ascending=False)
@@ -393,12 +403,13 @@ linked_list = LinkedList_SavingsTransaction()
 for index, row in sorted_df.iterrows():
     linked_list.append(row)
 
-#Customer_ID='cust_idno_1001'
+#Filter the LL data for given customer
 filtered_data = linked_list.filter_by_column_value('Customer_ID', Customer_Id)
+
 if filtered_data.get_length() == 0:
     print(f"There are no transactions for Customer_ID: {Customer_Id}\n")
 else:
-# Example: Print the linked list in a readable format
+# Print the linked list in a readable format
     current = filtered_data.head
     print(f"Last 10 Transactiosn for Customer_ID: {current.data['Customer_ID']}\n")
     record = 1
