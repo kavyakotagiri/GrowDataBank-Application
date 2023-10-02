@@ -3,7 +3,8 @@
 Team Name - Tech Titans
 Team Members - Kavya Kotagiri
 
-**Problem Statement: Developing a Banking Application Code with Integrated Modules for Loan, Savings Account, and Credit Cards Management**
+**Problem Statement: 
+Developing a Banking Application Code with Integrated Modules for Loan, Savings Account, and Credit Cards Management**
 
 **Description:** You are tasked with developing a comprehensive banking application that manages customer accounts across three departments: Loan, Savings Account, and Credit Cards. The application's primary function is to provide a financial summary of any customer, including loan status, credit status, and current balance. Additionally, the application should identify potential Non-Performing Asset (NPA) customers and determine which customers should be offered increased credit card balances. Your solution should emphasize code efficiency and utilize Linked Lists and Object-Oriented Programming (OOP) concepts.
 
