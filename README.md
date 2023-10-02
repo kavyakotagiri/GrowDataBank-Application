@@ -1,112 +1,71 @@
-# GrowDataApplication
-**GrowDataApplication - Hackathon
-Team Name - Tech Titans
-Team Members - Kavya Kotagiri**
+**GrowDataApplication - Hackathon**
 
-Files details :
+Team Name - Tech Titans
+Team Members - Kavya Kotagiri
+
+**Problem Statement: Developing a Banking Application Code with Integrated Modules for Loan, Savings Account, and Credit Cards Management**
+
+**Description:** You are tasked with developing a comprehensive banking application that manages customer accounts across three departments: Loan, Savings Account, and Credit Cards. The application's primary function is to provide a financial summary of any customer, including loan status, credit status, and current balance. Additionally, the application should identify potential Non-Performing Asset (NPA) customers and determine which customers should be offered increased credit card balances. Your solution should emphasize code efficiency and utilize Linked Lists and Object-Oriented Programming (OOP) concepts.
 
 Data File – GrowDataBank.xlsx
-GrowDataBankApplication.py – Code file which has all the logic
-GrowDataBankApplication.ibynp – Same code file but to run on Jupyter Notebook
-GrowDataBank_Application.ppt – PPT with all the Application details
-README.md – contains details of each class and method in the application code.
 
-GrowDataApplication can be run using Visual Studio code or using Jupyter Notebook
-Separate files for VSCode and Jupyter Notebook are provided
+**Problem Components:**
+**1.	Data Understanding and Cleaning:**
+	* Read and integrate data from three CSV files: Loan Account Data, Credit Card Data, and Savings Account Transactions Data.
+	* Create classes to represent customer accounts for each department, ensuring data integrity.
+	* Clean the data, to read it properly in CSV format tabular format.(hint- create separate columns from the uncleaned 1st column in salary transactions)
+ 
+**2.	Account Management Modules:**
+	* Develop separate modules for Loan, Savings Account, and Credit Card management, each implementing relevant functions. (The class will have methods that takes the data as attribute and other arguments 	and summarizes the insights for the user.)
+	Example- takes a user id as input or a month as input in salary transaction month and outputs the summary for that in a readable format.
+	* Utilize OOP principles to create classes for account types with methods for account updates and status calculations.
+	Make classes for three different account data.
+ 
+**3.	Financial Summary Function:**
+	* Create a centralized function that takes a customer ID as input and provides a financial summary, including loan status, credit status, and current balances.
+	* This function basically calls all the methods that you defined in the class earlier.
+	* Update the customer's account information by invoking the respective modules.
+ 
+**4.	Transaction History:**
+	* Implement a module to retrieve and display the last 10 transactions for each customer's savings account.
+	* Organize transaction data efficiently using Linked Lists for quick access.
+ 
+**5.	NPA Identification:**
+	* Develop an algorithm to identify potential Non-Performing Asset (NPA) customers based on predefined criteria, such as missed EMI payments.
+	* Generate a list of NPA customers for further action.
 
-Run the below file to run the application in VS Code :
-GrowDataBankApplication.py
+**6.	Credit Card Offering:**
+	* Create a mechanism to determine which customers are eligible for increased credit card balances.
+	* Implement an algorithm considering factors like credit limit, outstanding bills, and transaction history.
 
-Run the below file to run the application in Jupyter Notebook:
-GrowDataBankApplication.ipynp
+**7.	Code Efficiency and Optimization:**
+	* Assess and optimize the code for efficiency, focusing on time complexity.
+ 	* Implement efficient data structures like Linked Lists for transaction history storage and retrieval.
+	* Employ appropriate algorithms for NPA identification and credit card offering.
 
-Make sure DataGrowBank.xlsx file is available in the same folder the above code file is.
+**8.	Documentation and Reporting:**
+	* Maintain detailed documentation explaining the code structure, algorithms, and classes used.
+	* Generate reports summarizing NPA customers, credit card offerings, and code efficiency improvements.
 
-Also make sure all the required libraries are installed on VSCode/Jupyter Notebook
+In summary, this project challenges you to develop a banking application with integrated modules for Loan, Savings Account, and Credit Cards management. The application should provide financial summaries for customers, identify NPAs, and determine credit card offerings while emphasizing code efficiency and utilizing Linked Lists and OOP principles. The success of the project will be judged based on the accuracy of financial summaries, the effectiveness of NPA identification, and the efficiency of the code.
 
-Problem Statements:
+**Compulsory Submission-**
+Following functionality is mandatory in Code-
+-	Summary for individual Customer Saving Account for whole duration
+-	Code that gives me monthly report for each customer- report will have spent on both account – credit and savings.
+-	Account analysis for customer who have taken loans and have high missed EMI’s.
+-	
+**Judgement Criteria-**
+The judgement would be taken by both the panel and votes, following will be the criteria for judging.
+-	Modularity of code i.e., have you used classes and methods in your code.
+-	Have you used correct data structure for the correct task considering the Big0 notation in mind.
+-	How clean and readable your code is.
+-	Do you have the relevant graphs to support your arguments.
 
-Separate excel sheets data into different CSV files
-Cleaning of data
-Separate Modules for each Department
-Savings Account
-Loan Account
-Credit Card
-Utilize OOPS principles
-Financial Summary Data
-Transaction History Data using Linked List Data Structure
-NPA Identification
-Credit Card Offering
-High Missed EMI’s Customers
-Monthly Spends of each customer
-Data Visualization
-
-Now let us explore the data.
-
-1. Separate excel sheets data into different CSV files
-2. Cleaning of Data
-
-class ExcelToCSV is created to perform this task.
-Excel file D=GrowData.xlsx file, sheet “Savings Accoun Transaction Data “ data is cleaned using dropna() and str.strip() funtions.
-
-3. Separate Modules for each Department
-4. Utilize OOPS principles
-
-
-Class SavingsTransaction – For Savings Account Transaction Data
-
-Class LoanTransaction – For Loan Account Data
-
-Class CreditCardTransaction – For Credit Card Data
-
-5. Financial Summary Data
-
-This can take user id as input or a month as input.
-
-Created separate classes methods based on the argument passed.
-
-Created a centralized class FinancialSummary which calls the modules of each department and gets the financial summary based on the argument passed.
-
-when customer id is passed as argument:
-
-Class SavingsTransaction Method get_current_balance_cid is used to calculate the Current Balance of savings account.
-
-Class LoanTransaction Method get_loan_rem_cid is used to calculate the Current Balance of savings account.
-
-Class CreditCardTransaction Method get_credit_rem_cid is used to calculate the Current Balance of savings account.
-
-when month is passed as argument:
-
-Class SavingsTransaction Method get_current_balance_month is used to calculate the Current Balance of savings account.
-
-Class LoanTransaction Method get_loan_rem_month is used to calculate the Current Balance of savings account.
-
-Class CreditCardTransaction Method get_credit_rem_month is used to calculate the Current Balance of savings account.
-
-6. Transaction History Data using Linked List Data Structure
-
-Class Node is created for Linked List Node
-
-Class LinkedList_SavingsTransaction is created for storing savings account transactions.
-
-	append() method is used to add each row of the file data to LL data structure.
-
-	filter_by_column_value() is used to filter the transactiosn based on customer id argument. 	This method is dynamic and can be used to filter any column. Here I used it to filter data 	based on customer_id
-
-	getlength() is used to find the legth of the LL datastructure.
-
-7. NPA Identification
-
-Class NPAIdentification is created to identify NPA accounts and lists all the details of these accounts.
-
-8. Credit Card Offering
-
-Class CreditCardOffering is created to identify customers eligible for increased credit card balances and lists all the details of these accounts.
-
-9. High Missed EMI’s Customers
-
-Class LoanTransaction method get_max_missed_emi is created to identify high missed EMIs customer accounts and lists all the details of these accounts.
-
-10. Monthly Spends of each customer
-
-Class MonthlySpends method get_monthly_data is created to identify customers eligible for increased credit card balances and lists all the details of these accounts.
+**Rules**
+-	There is no limit to what resource you are using Google. I won’t recommend using AI tools like ChatGPT to create the whole code. Sure you can use to correct syntax of to find a logic.
+-	Submission in the Time limit of 24 hr will be considered for judgements.
+-	Put all your work to a GitHub repo. PPT, document, Code file whatever you make.
+-	Code file is compulsory in GitHub, rest depends on your choice and the time left for you.
+  
+Good Luck!
