@@ -63,11 +63,5 @@ The judgement would be taken by both the panel and votes, following will be the 
 -	Have you used correct data structure for the correct task considering the Big0 notation in mind.
 -	How clean and readable your code is.
 -	Do you have the relevant graphs to support your arguments.
-
-**Rules**
--	There is no limit to what resource you are using Google. I won’t recommend using AI tools like ChatGPT to create the whole code. Sure you can use to correct syntax of to find a logic.
--	Submission in the Time limit of 24 hr will be considered for judgements.
--	Put all your work to a GitHub repo. PPT, document, Code file whatever you make.
--	Code file is compulsory in GitHub, rest depends on your choice and the time left for you.
   
 Good Luck!
