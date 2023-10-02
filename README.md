@@ -56,7 +56,7 @@ Following functionality is mandatory in Code-
 -	Summary for individual Customer Saving Account for whole duration
 -	Code that gives me monthly report for each customer- report will have spent on both account – credit and savings.
 -	Account analysis for customer who have taken loans and have high missed EMI’s.
--	
+  
 **Judgement Criteria-**
 The judgement would be taken by both the panel and votes, following will be the criteria for judging.
 -	Modularity of code i.e., have you used classes and methods in your code.
