@@ -1,4 +1,4 @@
-**GrowDataApplication - Hackathon**
+**GrowDataBank Application - Hackathon**
 
 Team Name - Tech Titans
 
